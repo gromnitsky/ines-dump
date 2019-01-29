@@ -1,0 +1,10 @@
+{
+    "dependencies": {
+        "buffer-crc32": "^0.2.13",
+        "commander": "~2.19.0",
+        "nes-file": "github:satoshinm/nes-file#5e412c5",
+        "ramda": "^0.26.1",
+        "sprintf-js": "^1.1.2"
+    },
+    "version": "0.0.1"
+}
