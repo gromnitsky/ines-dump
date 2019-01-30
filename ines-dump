@@ -11,7 +11,7 @@ function main() {
     let meta = require('./package.json')
 
     cmd.version(meta.version)
-	.arguments('[file.nes]')
+	.usage('[options] [file.nes ...]')
 	.option('-f, --format <type>', 'jsonl, shell, human')
 	.option('-a, --all', 'output all available info')
 	.option('--nointro', 'extract additional info from file _names_')
@@ -52,7 +52,7 @@ function print(rom, opt) {
 }
 
 function filter(rom, opt) {
-    let essential = ['file', 'file_size',
+    let essential = ['file', 'rom_size',
 		     'name', 'publisher', 'regions', 'variant', 'date',
 		     'licensed',
 		     'crc32', 'sha1',
@@ -84,7 +84,7 @@ function is_str(s) {
     return Object.prototype.toString.call(s) === "[object String]"
 }
 function sq(s) {
-    return /^[\w-,]+$/.test(s) ? s : "'" + s.toString().replace(/'/g, "'\\''") + "'"
+    return /^[\w-,/]+$/.test(s) ? s : "'" + s.toString().replace(/'/g, "'\\''") + "'"
 }
 
 
