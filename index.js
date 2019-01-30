@@ -43,15 +43,27 @@ function parse_filename(file) {	// the No-Intro style
     return r
 }
 
-function parse_date(date) {
-    let month = date / 100, year = date % 100
-    if (month) {
-	let fmt = "%d/19%d" + ((year === 8 || year === 9) ? "x" : "")
-	return sprintf(fmt, month, year)
-    } else {
-	let fmt = "19%d" + (year === 8 || year === 9 ? "x" : "")
-	return sprintf(fmt, year)
+function parse_date(num) {
+    let ucon64_style = num => {
+	let month = num / 100, year = num % 100
+	if (month) {
+	    let fmt = "%d/19%d" + ((year === 8 || year === 9) ? "x" : "")
+	    return sprintf(fmt, month, year)
+	} else {
+	    let fmt = "19%d" + (year === 8 || year === 9 ? "x" : "")
+	    return sprintf(fmt, year)
+	}
     }
+
+    let d = new Date('1983-07-15') // Famicon launch in Japan
+    let [m, y] = ucon64_style(num).split('/').map(Number)
+    if (y) {
+	d.setMonth(m-1)
+	d.setFullYear(y)
+    } else
+	d.setFullYear(m)
+
+    return d
 }
 
 let regions = ["Japan", "USA", "Europe",

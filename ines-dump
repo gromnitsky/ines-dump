@@ -37,8 +37,10 @@ function print(rom, opt) {
     if (opt.format === 'shell') {
 	console.log('')
 	R.mapObjIndexed( (val, key) => {
+	    if (key === 'date') val = val.toISOString()
 	    console.log(`${key}=${sq(val)}`)
 	}, rom)
+
     } else if (opt.format === 'jsonl') {
 	process.stdout.write(JSON.stringify(rom) + "\n")
 
@@ -46,7 +48,8 @@ function print(rom, opt) {
 	console.log('')
 	R.mapObjIndexed( (val, key) => {
 	    if (Array.isArray(val)) val = val.join(', ')
-	    console.log(sprintf('%-23s	%s', key, val))
+	    if (key === 'date') val = `${val.getUTCMonth()+1}/${val.getUTCFullYear()}`
+	    console.log(sprintf('%-23s  %s', key, val))
 	}, rom)
     }
 }
