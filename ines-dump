@@ -1,41 +1,42 @@
 #!/usr/bin/env node
 'use strict'
 
-let file_read = require('util').promisify(require('fs').readFile)
+let fs = require('fs')
 let R = require('ramda')
 let sprintf = require('sprintf-js').sprintf
-let parse = require('.')
+let cmd = require('commander')
+let parse = require('./index')
+let meta = require('./package.json')
 
 function main() {
-    let cmd = require('commander')
-    let meta = require('./package.json')
-
     cmd.version(meta.version)
 	.usage('[options] [file.nes ...]')
 	.option('-f, --format <type>', 'jsonl, shell, human')
 	.option('-a, --all', 'output all available info')
 	.option('--nointro', 'extract additional info from file _names_')
-	.option('-v, --verbose', 'be verbose')
 	.parse(process.argv)
 
-    let src = cmd.args.length ? cmd.args : [process.stdin]
+    let src = cmd.args.length ? cmd.args : ['/dev/stdin']
+    let first = true
 
-    src.forEach( input => {
-	open(input)
-	    .then( r => parse(r, cmd))
-	    .then( r => filter(r, cmd))
-	    .then( r => print(r, cmd))
-	    .catch( err => {
-		let prefix = `${cmd._name} error: ${sq(filename(input))}: `
-		console.error(prefix + err[cmd.verbose ? 'stack' : 'message'])
-		process.exitCode = 1
-	    })
-    })
+    for (let input of src) {
+	let r
+	try {
+	    r = parse(open(input), cmd)
+	} catch(err) {
+	    console.error(`${cmd._name} error: ${sq(input)}: ${err.message}`)
+	    process.exitCode = 1
+	    continue
+	}
+
+	print(filter(r, cmd), R.mergeRight(cmd, {first}))
+	first = false
+    }
 }
 
 function print(rom, opt) {
     if (opt.format === 'shell') {
-	console.log('')
+	if (!opt.first) console.log('')
 	R.mapObjIndexed( (val, key) => {
 	    if (key === 'date') val = val.toISOString()
 	    console.log(`${key}=${sq(val)}`)
@@ -45,7 +46,7 @@ function print(rom, opt) {
 	process.stdout.write(JSON.stringify(rom) + "\n")
 
     } else { // human-readable
-	console.log('')
+	if (!opt.first) console.log('')
 	R.mapObjIndexed( (val, key) => {
 	    if (Array.isArray(val)) val = val.join(', ')
 	    if (key === 'date') val = `${val.getUTCMonth()+1}/${val.getUTCFullYear()}`
@@ -65,27 +66,13 @@ function filter(rom, opt) {
     return opt.all ? R.omit(uninteresting, rom) : R.pick(essential, rom)
 }
 
-async function open(input) {
+function open(input) {
     return {
-	file: filename(input),
-	buf: await (is_str(input) ? file_read(input) : read(input))
+	file: input,
+	buf: fs.readFileSync(input)
     }
 }
 
-function filename(input) { return is_str(input) ? input : 'stdin' }
-
-function read(stream) {
-    return new Promise( (resolve, reject) => {
-	let data = []
-	stream.on('data', chunk => data.push(chunk))
-	    .on('end', () => resolve(Buffer.concat(data)))
-	    .on('error', reject)
-    })
-}
-
-function is_str(s) {
-    return Object.prototype.toString.call(s) === "[object String]"
-}
 function sq(s) {
     return /^[\w-,/]+$/.test(s) ? s : "'" + s.toString().replace(/'/g, "'\\''") + "'"
 }

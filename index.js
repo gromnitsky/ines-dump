@@ -23,7 +23,7 @@ module.exports = function(input, opt) {
     rom.file = path.basename(input.file)
     rom.rom_size = input.buf.length - 16
 
-    if (opt.nointro && input.file !== 'stdin')
+    if (opt.nointro && input.file !== '/dev/stdin')
 	rom = R.mergeRight(rom, parse_filename(rom.file))
     return rom
 }
