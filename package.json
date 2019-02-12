@@ -7,13 +7,13 @@
         "sprintf-js": "^1.1.2"
     },
     "name": "ines-dump",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "author": "Alexander Gromnitsky",
     "license": "GPLv2",
     "repository": "github:gromnitsky/ines-dump",
     "bin": {
         "ines-dump": "./ines-dump"
     },
-    "description": "List detailed information about .nes files in jsonl, shell or a human-readable format",
+    "description": "List detailed information about .nes files in json, shell or a human-readable format",
     "keywords": ["nes", "ines", "nintendo"]
 }
