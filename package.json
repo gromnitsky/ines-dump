@@ -1,19 +1,23 @@
 {
     "dependencies": {
-        "buffer-crc32": "^0.2.13",
+        "buffer-crc32": "~0.2.13",
         "commander": "~2.19.0",
-        "nes-file": "github:satoshinm/nes-file#5e412c5",
-        "ramda": "^0.26.1",
-        "sprintf-js": "^1.1.2"
+        "nes-file": "github:satoshinm/nes-file#b806ae5",
+        "ramda": "~0.26.1",
+        "sprintf-js": "~1.1.2"
     },
     "name": "ines-dump",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "author": "Alexander Gromnitsky",
-    "license": "GPLv2",
+    "license": "GPL-2.0-only",
     "repository": "github:gromnitsky/ines-dump",
     "bin": {
         "ines-dump": "./ines-dump"
     },
     "description": "List detailed information about .nes files in json, shell or a human-readable format",
-    "keywords": ["nes", "ines", "nintendo"]
+    "keywords": [
+        "nes",
+        "ines",
+        "nintendo"
+    ]
 }
